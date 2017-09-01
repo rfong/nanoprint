@@ -1,4 +1,4 @@
-"""Unit tests for print_friendly_csv functionality"""
+"""Unit tests for CSV/text formatting functionality"""
 
 import unittest
 
@@ -47,13 +47,26 @@ class TestStringUtils(TestCase):
   def test_right_index_of(self):
     self.assertEqual(right_index_of('foo bar', ' ', 4), 3)
     self.assertEqual(right_index_of('foo bar', ' ', 3), 3)
-    with self.assertRaises(ValueError):
-      self.assertEqual(right_index_of('foo bar', ' ', 2), 3)
+    self.assertEqual(right_index_of('foo bar', ' ', 2), None)
 
 
-from table_wrap import break_to_width, wrap_row
+from table_wrap import find_break_acceptable_index, break_to_width, wrap_row
 
 class TestTableWrap(TestCase):
+
+  def test_find_break_acceptable_index(self):
+    cases = [
+      (('boop', '-', 3), None),
+      (('blop-blop', '-', 5), 4),
+      (('blop-blop', '-', 4), None),
+      (('pew-!', '-', 5), 3),
+      (('pew-!', '-!', 5), 4),
+      (('pew!-', '-!', 5), 4),
+      (('abcd-efghi', '-', 5), 4),
+    ]
+    for args, expected in cases:
+      self.run_function_on_case(
+        find_break_acceptable_index, expected, args=args)
 
   def test_break_to_width(self):
     # <args>, <expected output>
@@ -75,6 +88,11 @@ class TestTableWrap(TestCase):
       (('lorem ipsum dolor', 4), ['lore', 'm', 'ipsu', 'm', 'dolo', 'r']),
       (('thequickbrownfoxjumps', 10), ['thequickbr', 'ownfoxjump', 's']),
     ]
+    # <args>, <break_chrs>, <expected output>
+    break_chrs_cases = [
+      (('abcd-efghi', 6), '-', ['abcd-', 'efghi']),
+      (('omg(yay)wtfbbq', 8), ')', ['omg(yay)', 'wtfbbq']),
+    ]
 
     for args, expected in (common_cases + hyphen_cases):
       self.run_function_on_case(
@@ -83,6 +101,20 @@ class TestTableWrap(TestCase):
     for args, expected in (common_cases + nohyphen_cases):
       self.run_function_on_case(
         break_to_width, expected, args=args, kwargs={'hyphen_break': False})
+
+    for args, expected in common_cases:
+      self.run_function_on_case(
+        break_to_width, expected, args=args,
+        kwargs={'hyphen_break': False, 'break_chrs': ''})
+      self.run_function_on_case(
+        break_to_width, expected, args=args,
+        kwargs={'hyphen_break': False, 'break_chrs': '-'})
+
+    for args, break_chrs, expected in break_chrs_cases:
+      self.run_function_on_case(
+        break_to_width, expected, args=args,
+        kwargs={'hyphen_break': False, 'break_chrs': break_chrs})
+
 
   def test_wrap_row(self):
     self.run_function_on_case(

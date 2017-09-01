@@ -3,8 +3,8 @@ text_format
 
 tiny utils for formatting tiny plaintext for tiny printers
 
-See `update_drill_docs.sh` for a usage example of formatting a CSV file into
-a wrapped tiny table.
+See `update_docs.sh` for usage examples of formatting CSV files into
+wrapped tiny tables.
 
 # Printing
 

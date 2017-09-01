@@ -1,0 +1,13 @@
+rachel's forgotten PLLs :(
+
+PLL algorithm                  
+--------------------------------
+Nb  R'URU'R'F'U'FRUR'FR'F'RU'R 
+Na  RUR'URUR'F'RUR'U'R'FR2U'R'U
+    2RU'R'                     
+Ga  RUR'y'-R2Uw'RU'R'U-R'UwR2  
+Gb  R'U'R(UD')R2U-             
+    R'URU'RU'R2'D(U')          
+Gc  R2Uw'RU'-RUR'-Uw-R2'FwR'Fw'
+Gd  R2Uw-R'UR'U'RUw'-(R2x')-   
+    Uw'RUw                     

@@ -12,4 +12,7 @@ def pad_str(s, length):
 
 def right_index_of(s, c, k):
   """Returns index of first `c` that is <= `k`"""
-  return k - s[:k+1][::-1].index(c)  # Reverse, index, unreverse
+  try:
+    return k - s[:k+1][::-1].index(c)  # Reverse, index, unreverse
+  except ValueError:
+    return None

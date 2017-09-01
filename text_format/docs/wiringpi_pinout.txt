@@ -1,0 +1,20 @@
+### wiringPi GPIO pinout ###
+
+     inside | outside
+
+     3v3  o   o  5v
+    SDA0  o   o  --
+    SCL0  o   o  GND
+  GPIO 7  o   o  TX
+      --  o   o  RX
+  GPIO 0  o   o  GPIO 1
+  GPIO 2  o   o  --
+  GPIO 3  o   o  GPIO 4
+      --  o   o  GPIO 5
+SPI MOSI  o   o  --
+SPI MISO  o   o  GPIO 6
+SPI SCLK  o   o  SPI CE0 N
+      --  o   o  SPI CE1 N
+
+
+

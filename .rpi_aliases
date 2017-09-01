@@ -1,0 +1,6 @@
+#!/bin/sh
+
+function gccio() {
+  # Usage: gccio <file.c> <executable_name> <additional flags>
+  gcc -Wall -o $2 $1 -lwiringPi -std=c11 ${@:3}
+}

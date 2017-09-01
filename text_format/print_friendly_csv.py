@@ -14,13 +14,12 @@ import optparse
 import string_utils
 import table_wrap
 
-LINE_LEN = 33  # max number of characters in a line with standard font
+LINE_LEN = 32  # max number of characters in a line with standard font
 FIELD_SEPARATOR = '|'
 
 
 def writeln(outfile, s):
-  outfile.write(s)
-  outfile.write('\n')
+  outfile.write(s + '\n')
 
 
 def main():

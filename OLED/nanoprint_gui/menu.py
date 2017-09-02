@@ -30,6 +30,8 @@ class Menu(BaseInterface):
       - an OrderedDict (specifies a nested option list)
       - a list (specifies plain text options)
       child levels may also be None or Shim
+      # Note: currently this enforces uniqueness -- may want to change that
+      # in the future
     """
     if type(nested_options) == list:
       self.options = nested_options

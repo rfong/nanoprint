@@ -1,3 +1,5 @@
+""" Shim for printing documents in the docs folder """
+
 import os
 import subprocess
 

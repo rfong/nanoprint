@@ -17,7 +17,7 @@ import core as nanoprint_core
 from core import PINS
 from menu import Menu
 
-from shims import DocumentShimFactory, FortuneTellerShim
+from shims import DocumentShimFactory, CuteFortuneShim, SassyFortuneShim
 
 
 def main():
@@ -25,17 +25,22 @@ def main():
 
   options = OrderedDict()
 
-  options['the cutest menu'] = ['A', 'B', 'C']
-  options['network printer'] = ['print me!', 'print you!']
-
   docs = OrderedDict()
   docs['US drill clearance'] = DocumentShimFactory('drill_clearance_us.txt', test=True)
   docs['metric drill clearance'] = DocumentShimFactory('drill_clearance_metric.txt', test=True)
   docs['PLL (forgotten)'] = DocumentShimFactory('rubiks_PLL_forgot.txt', test=True)
   options['documents'] = docs
 
+  fortunes = OrderedDict()
+  fortunes['-pick your poison-'] = None
+  fortunes['cute fortunes'] = CuteFortuneShim
+  fortunes['sassy fortunes'] = SassyFortuneShim
+  options['fortune teller'] = fortunes
+
+  options[''] = None
+  options['TODO:'] = None
+  options['network printer'] = ['print me!', 'print you!']
   options['notepad'] = None
-  options['fortune teller'] = FortuneTellerShim
   options['arcane bytes'] = None
   options['necronomicon'] = None
   options['bad stenography'] = None

@@ -1,18 +1,15 @@
 import os
 import subprocess
 
-from base import Shim
+from base import Shim, get_doc_path, BREAKPATH
 
-
-DOCS_BASE_PATH = '/home/rfong/text_format/docs'
 
 def print_document_factory(abs_path, test=False):
-  path = os.path.join(DOCS_BASE_PATH, abs_path)
-  breakpath = os.path.join(DOCS_BASE_PATH, 'linebreaks.txt')
+  path = get_doc_path(abs_path)
 
   def print_document():
     bash_expr = (
-      "head -n7 %s | cat - %s" % (path, breakpath)
+      "head -n7 %s | cat - %s" % (path, BREAKPATH)
       if test
       else "cat %s %s" % (path, breakpath)
     )

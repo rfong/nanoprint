@@ -17,7 +17,7 @@ import core as nanoprint_core
 from core import PINS
 from menu import Menu
 
-from shims import DocumentShimFactory
+from shims import DocumentShimFactory, FortuneTellerShim
 
 
 def main():
@@ -35,7 +35,7 @@ def main():
   options['documents'] = docs
 
   options['notepad'] = None
-  options['fortune teller'] = []
+  options['fortune teller'] = FortuneTellerShim
   options['arcane bytes'] = None
   options['necronomicon'] = None
   options['bad stenography'] = None

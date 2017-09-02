@@ -7,6 +7,7 @@ plug button pins
 """
 
 from collections import OrderedDict
+import os
 import socket
 import time
 
@@ -16,14 +17,23 @@ import core as nanoprint_core
 from core import PINS
 from menu import Menu
 
+from shims import DocumentShimFactory
+
 
 def main():
   display = nanoprint_core.get_display()
 
   options = OrderedDict()
+
   options['the cutest menu'] = ['A', 'B', 'C']
   options['network printer'] = ['print me!', 'print you!']
-  options['documents'] = ['tap drill US', 'tap drill metric', 'OLL', 'OLL_forgot']
+
+  docs = OrderedDict()
+  docs['US drill clearance'] = DocumentShimFactory('drill_clearance_us.txt', test=True)
+  docs['metric drill clearance'] = DocumentShimFactory('drill_clearance_metric.txt', test=True)
+  docs['PLL (forgotten)'] = DocumentShimFactory('rubiks_PLL_forgot.txt', test=True)
+  options['documents'] = docs
+
   options['notepad'] = None
   options['fortune teller'] = []
   options['arcane bytes'] = None

@@ -3,8 +3,10 @@
 
 from collections import OrderedDict
 import socket
+import time
 
 from base_interface import BaseInterface
+from shims import Shim
 
 
 def get_ip():
@@ -24,17 +26,19 @@ class Menu(BaseInterface):
   def __init__(self, disp, nested_options):
     """
     :disp: an instance of a Adafruit_SSD1306 display
-    :nested_options: either an OrderedDict or a list at each level
+    :nested_options: top level must be:
+      - an OrderedDict (specifies a nested option list)
+      - a list (specifies plain text options)
+      child levels may also be None or Shim
     """
-    assert (type(nested_options) == list or
-            isinstance(nested_options, OrderedDict)), (
-            "must pass list or OrderedDict of options")
     if type(nested_options) == list:
       self.options = nested_options
       self.nested_options = None
-    else:
+    elif isinstance(nested_options, OrderedDict):
       self.options = nested_options.keys()  # top level options
       self.nested_options = nested_options
+    else:
+      raise Exception("Options passed must be OrderedDict or list")
 
     super(Menu, self).__init__(disp)
 
@@ -113,11 +117,25 @@ class Menu(BaseInterface):
     """Perform action for currently selected item"""
     if not self.nested_options:  # Flat list
       return
-    children = self.nested_options.values()[self.current_index]
-    if not children:
+    child = self.nested_options.values()[self.current_index]
+
+    # No children, do nothing
+    if not child:
       return
-    # Create new menu from node children
-    submenu = Menu(self.display, children)
+
+    # Child is a Shim, perform action
+    elif isinstance(child, Shim):
+      if child.loading_message:
+        self.show_loading_screen(child.loading_message)
+      child.run()
+      if child.finished_message:
+        time.sleep(0.3)
+        self.show_loading_screen(child.finished_message)
+        time.sleep(0.3)
+
+    # Nested children, open a submenu
+    else:
+      submenu = Menu(self.display, child)
 
     # TODO: add 3rd button and then implement back functionality
 
@@ -144,6 +162,13 @@ class Menu(BaseInterface):
   PADDING = 5
 
   # Drawing helpers
+
+  def show_loading_screen(self, text):
+    """Redraw screen with a loading message"""
+    self.clear()
+    # TODO: wrap text
+    self.write_line(text, line=1)
+    self.update_display()
 
   def get_menu_line_y(self, line):
     """:line: index is in absolute frame, not display frame"""

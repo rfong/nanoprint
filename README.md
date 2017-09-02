@@ -3,6 +3,7 @@ nanoprint
 
 teeny tiny thermal printing (work in progress)
 
+[Collaborator notes](COLLAB.md)
 
 ## General todos
 + enable VNC

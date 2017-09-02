@@ -18,7 +18,8 @@ def translate_coords(coords, x, y):
 
 class NanoprintMenu(BaseInterface):
 
-  selected = 0
+  selected = 0  # Current selector index
+  scroll_frame = 0  # Top index of scroll frame
 
   def __init__(self, disp, options):
     self.options = options
@@ -32,7 +33,7 @@ class NanoprintMenu(BaseInterface):
     #  self.write_line("Searching for Wi-Fi...")
     #self.write_line("hihihihi", line=1)
 
-    self.draw_legend()
+    #self.draw_legend()
 
     # Draw menu
     for i, opt in enumerate(self.options):
@@ -41,7 +42,7 @@ class NanoprintMenu(BaseInterface):
 
     # Handle button presses & draw status
     if self.is_button_pressed('A'):
-      self.scroll()
+      self.increment_select()
 
   def draw_legend(self):
     """Draw button legend & status"""
@@ -76,8 +77,27 @@ class NanoprintMenu(BaseInterface):
 
   # Internal state helpers
 
-  def scroll(self):
+  def increment_select(self):
     self.selected = (self.selected + 1) % len(self.options)
+    if not self.is_line_entirely_in_display(self.selected):
+      self.scroll_frame += 1
+    if self.selected == 0:
+      self.scroll_frame = 0
+
+  def get_display_line_index(self, line):
+    """Translate line index to the scroll frame"""
+    return line - self.scroll_frame
+
+  def is_line_entirely_in_display(self, line):
+    return (
+      (self.get_menu_line_y(line + 1) < self.display.height) and
+      (self.get_menu_line_y(line) >= 0))
+
+  def is_line_out_of_frame(self, line):
+    return (
+      (self.get_menu_line_y(line + 1) < 0) or
+      (self.get_menu_line_y(line) >= self.display.height)
+    )
 
   # Constants
 
@@ -89,13 +109,18 @@ class NanoprintMenu(BaseInterface):
 
   # Drawing helpers
 
+  def get_menu_line_y(self, line):
+    """:line: index is in absolute frame, not display frame"""
+    return self.PADDING + self.get_display_line_index(line) * self.LINE_HEIGHT
+
   def write_line(self, text, line=0):
     """Write text on line (check width; will overflow)"""
     self.draw.text(
-      (2 * self.PADDING, self.PADDING + line * self.LINE_HEIGHT),
+      (2 * self.PADDING, self.get_menu_line_y(line)),
       text, font=self.font, fill=1)
 
   def draw_line_pointer(self, line, fill=0):
+    line = self.get_display_line_index(line)
     self.draw.polygon(
       translate_coords([(2,8), (6,10.5), (2,13)], 0, line * self.LINE_HEIGHT),
       outline=255, fill=fill)

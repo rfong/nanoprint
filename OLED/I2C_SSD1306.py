@@ -1,4 +1,6 @@
-"""Display my IP on an OLED SSD1306 screen"""
+"""
+Display my IP on an OLED SSD1306 screen
+"""
 
 import socket
 import time

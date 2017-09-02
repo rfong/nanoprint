@@ -1,1 +1,8 @@
 *.pyc
+*.swp
+*.swo
+
+.bash*
+.pip
+.ssh
+.vim*

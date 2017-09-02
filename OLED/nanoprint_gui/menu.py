@@ -65,13 +65,9 @@ class Menu(BaseInterface):
 
   def draw_legend(self):
     """Draw button legend & status"""
-    legend_width = 14
+    legend_width = 6
     legend_x = self.display.width - legend_width - 1
     legend_center = legend_x + legend_width/2
-
-    # Mark out button legend bounds
-    self.draw_vertical_line(legend_x, fill=1)
-    self.draw_vertical_line(self.display.width-1, fill=1)
 
     # Button A - down arrow
     self.draw.polygon(

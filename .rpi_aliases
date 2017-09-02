@@ -4,3 +4,9 @@ function gccio() {
   # Usage: gccio <file.c> <executable_name> <additional flags>
   gcc -Wall -o $2 $1 -lwiringPi -std=c11 ${@:3}
 }
+
+function print_test() {
+  sudo stty -F /dev/serial0 9600
+  sudo sh -c "cat /home/rfong/text_format/docs/drill_clearance_us.txt | head > /dev/serial0"
+  sudo sh -c 'echo "\\n\\n\\n" > /dev/serial0'
+}

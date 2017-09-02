@@ -6,4 +6,4 @@ Useful stuff in `/usr/share`
 + `wiringPi`
 + `zj-58`
 
-Quick print test: `sudo /home/rfong/text_format/print_test.sh`
+Quick print test: `source .rpi_aliases && print_test`

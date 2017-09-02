@@ -9,6 +9,8 @@ import tempfile
 from base import Shim, BREAKPATH
 
 
+# Hmmm it would be nice if we could make this shim stateful so we are always
+# printing different fortunes...
 def print_random_fortune_factory(fortunes):
   def print_random_fortune():
     # Use a tempfile because using file I/O instead of strings in memory

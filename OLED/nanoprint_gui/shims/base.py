@@ -19,7 +19,7 @@ Shim = namedtuple('Shim', [
 ], verbose=True)
 
 
-DOCS_BASE_PATH = '/home/rfong/text_format/docs'
+DOCS_BASE_PATH = '/home/rfong/nanoprint/text_format/docs'
 
 def get_doc_path(rel_path):
   return os.path.join(DOCS_BASE_PATH, rel_path)

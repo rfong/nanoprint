@@ -55,7 +55,8 @@ class Menu(BaseInterface):
 
     # Draw menu
     for i, opt in enumerate(self.options):
-      self.write_line(opt, line=i)
+      if self.is_line_entirely_in_display(i):
+        self.write_line(opt, line=i)
     self.draw_line_pointer(self.current_index)
 
     # Handle button presses
@@ -100,8 +101,8 @@ class Menu(BaseInterface):
   current_index = 0  # Current selection index
   scroll_frame = 0  # Top index of scroll frame
   button_names = ['A', 'B']
-
   was_button_pressed = {name: False for name in button_names}  # on prev loop
+
   def is_button_first_pressed(self, name):
     """Clean button press detection. Ignores continuous pressing."""
     return self.is_button_pressed(name) and not self.was_button_pressed[name]

@@ -1,8 +1,10 @@
+""" Interactive/scrollable configurable menu functionality """
+
+
 from collections import OrderedDict
 import socket
 
 from base_interface import BaseInterface
-from util import AttrDict, Vector2D
 
 
 def get_ip():
@@ -17,7 +19,7 @@ def translate_coords(coords, x, y):
   return [(c[0] + x, c[1] + y) for c in coords]
 
 
-class NanoprintMenu(BaseInterface):
+class Menu(BaseInterface):
 
   def __init__(self, disp, nested_options):
     """
@@ -34,7 +36,7 @@ class NanoprintMenu(BaseInterface):
       self.options = nested_options.keys()  # top level options
       self.nested_options = nested_options
 
-    super(NanoprintMenu, self).__init__(disp)
+    super(Menu, self).__init__(disp)
 
   def loop(self):
     """ Main render loop """
@@ -119,7 +121,7 @@ class NanoprintMenu(BaseInterface):
     if not children:
       return
     # Create new menu from node children
-    submenu = NanoprintMenu(self.display, children)
+    submenu = Menu(self.display, children)
 
     # TODO: add 3rd button and then implement back functionality
 
@@ -144,9 +146,6 @@ class NanoprintMenu(BaseInterface):
 
   LINE_HEIGHT = 10
   PADDING = 5
-
-  BASE_COORDS = AttrDict({
-  })
 
   # Drawing helpers
 

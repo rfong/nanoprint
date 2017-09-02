@@ -1,3 +1,7 @@
+"""
+Base manager to run a render loop, refresh display, and get button presses
+"""
+
 from PIL import Image
 from PIL import ImageDraw
 from PIL import ImageFont

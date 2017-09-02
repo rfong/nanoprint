@@ -1,3 +1,6 @@
+""" Hardware setup """
+
+
 import Adafruit_SSD1306
 import RPi.GPIO as GPIO
 

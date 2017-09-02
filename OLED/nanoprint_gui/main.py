@@ -14,7 +14,7 @@ import RPi.GPIO as GPIO
 
 import core as nanoprint_core
 from core import PINS
-from nanoprint_menu import NanoprintMenu
+from menu import Menu
 
 
 def main():
@@ -30,7 +30,7 @@ def main():
   options['necronomicon'] = None
   options['bad stenography'] = None
 
-  menu = NanoprintMenu(display, options)
+  menu = Menu(display, options)
 
 
 if __name__ == '__main__':

@@ -10,6 +10,8 @@ from core import PINS
 
 class BaseInterface(object):
 
+  REFRESH_TIME = 0.01
+
   def __init__(self, display):
     """
     :param display: a reference to an initialized SSD1306_128_64 object
@@ -49,7 +51,7 @@ class BaseInterface(object):
   def update_display(self):
     self.display.image(self.image)
     self.display.display()
-    time.sleep(.01)
+    time.sleep(self.REFRESH_TIME)
     self.clear()
 
   def is_button_released(self, name):

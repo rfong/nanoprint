@@ -1,3 +1,4 @@
+from collections import OrderedDict
 import socket
 
 from base_interface import BaseInterface
@@ -18,14 +19,25 @@ def translate_coords(coords, x, y):
 
 class NanoprintMenu(BaseInterface):
 
-  selected = 0  # Current selector index
-  scroll_frame = 0  # Top index of scroll frame
+  def __init__(self, disp, nested_options):
+    """
+    :disp: an instance of a Adafruit_SSD1306 display
+    :nested_options: either an OrderedDict or a list at each level
+    """
+    assert (type(nested_options) == list or
+            isinstance(nested_options, OrderedDict)), (
+            "must pass list or OrderedDict of options")
+    if type(nested_options) == list:
+      self.options = nested_options
+      self.nested_options = None
+    else:
+      self.options = nested_options.keys()  # top level options
+      self.nested_options = nested_options
 
-  def __init__(self, disp, options):
-    self.options = options
     super(NanoprintMenu, self).__init__(disp)
 
   def loop(self):
+    """ Main render loop """
     #ip_addr = get_ip()
     #if ip_addr:
     #  self.write_line("IP: " + ip_addr)
@@ -38,11 +50,16 @@ class NanoprintMenu(BaseInterface):
     # Draw menu
     for i, opt in enumerate(self.options):
       self.write_line(opt, line=i)
-    self.draw_line_pointer(self.selected)
+    self.draw_line_pointer(self.current_index)
 
-    # Handle button presses & draw status
+    # Handle button presses
     if self.is_button_pressed('A'):
       self.increment_select()
+    if self.is_button_first_pressed('B'):
+      self.selected_action()
+
+    for name in self.button_names:
+      self.was_button_pressed[name] = self.is_button_pressed(name)
 
   def draw_legend(self):
     """Draw button legend & status"""
@@ -50,9 +67,10 @@ class NanoprintMenu(BaseInterface):
     legend_x = self.display.width - legend_width - 1
     legend_center = legend_x + legend_width/2
 
-    # Mark out button legend
+    # Mark out button legend bounds
     self.draw_vertical_line(legend_x, fill=1)
     self.draw_vertical_line(self.display.width-1, fill=1)
+
     # Button A - down arrow
     self.draw.polygon(
       translate_coords([(0,0), (6,0), (3, 6)], legend_center - 3, self.PADDING),
@@ -65,7 +83,7 @@ class NanoprintMenu(BaseInterface):
       outline=255,
       fill=int(self.is_button_pressed('B'))
     )
-    # Button C - back arrow
+    # Button C - back arrow  (not implemented in hardware yet)
     self.draw.polygon(
       translate_coords(
         [(0,3), (6,0), (6,6)],
@@ -75,14 +93,37 @@ class NanoprintMenu(BaseInterface):
       fill=int(self.is_button_pressed('A'))
     )
 
-  # Internal state helpers
+  # Internal state management
+
+  current_index = 0  # Current selection index
+  scroll_frame = 0  # Top index of scroll frame
+  button_names = ['A', 'B']
+
+  was_button_pressed = {name: False for name in button_names}  # on prev loop
+  def is_button_first_pressed(self, name):
+    """Clean button press detection. Ignores continuous pressing."""
+    return self.is_button_pressed(name) and not self.was_button_pressed[name]
 
   def increment_select(self):
-    self.selected = (self.selected + 1) % len(self.options)
-    if not self.is_line_entirely_in_display(self.selected):
+    self.current_index = (self.current_index + 1) % len(self.options)
+    if not self.is_line_entirely_in_display(self.current_index):
       self.scroll_frame += 1
-    if self.selected == 0:
+    if self.current_index == 0:
       self.scroll_frame = 0
+
+  def selected_action(self):
+    """Perform action for currently selected item"""
+    if not self.nested_options:  # Flat list
+      return
+    children = self.nested_options.values()[self.current_index]
+    if not children:
+      return
+    # Create new menu from node children
+    submenu = NanoprintMenu(self.display, children)
+
+    # TODO: add 3rd button and then implement back functionality
+
+  # Line convenience helpers
 
   def get_display_line_index(self, line):
     """Translate line index to the scroll frame"""

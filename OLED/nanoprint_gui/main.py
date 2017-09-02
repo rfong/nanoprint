@@ -6,6 +6,7 @@ plug VCC, GND, SCL, SDA into bonnet
 plug button pins
 """
 
+from collections import OrderedDict
 import socket
 import time
 
@@ -18,9 +19,18 @@ from nanoprint_menu import NanoprintMenu
 
 def main():
   display = nanoprint_core.get_display()
-  menu = NanoprintMenu(display,
-    #['Network printer', 'Documents', 'Notepad'])
-    ['the cutest menu', 'network printer', 'documents', 'notepad', 'fortune teller', 'arcane bytes', 'necronomicon', 'bad stenography'])
+
+  options = OrderedDict()
+  options['the cutest menu'] = ['A', 'B', 'C']
+  options['network printer'] = ['print me!', 'print you!']
+  options['documents'] = ['tap drill US', 'tap drill metric', 'OLL', 'OLL_forgot']
+  options['notepad'] = None
+  options['fortune teller'] = []
+  options['arcane bytes'] = None
+  options['necronomicon'] = None
+  options['bad stenography'] = None
+
+  menu = NanoprintMenu(display, options)
 
 
 if __name__ == '__main__':

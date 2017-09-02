@@ -1,5 +1,4 @@
 nanoprint
 -----
 
-teeny tiny thermal printing
-
+teeny tiny thermal printing (work in progress)

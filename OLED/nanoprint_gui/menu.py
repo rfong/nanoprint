@@ -7,6 +7,7 @@ import time
 
 from base_interface import BaseInterface
 from shims import Shim
+from util import AttrDict
 
 
 def get_ip():
@@ -23,7 +24,7 @@ def translate_coords(coords, x, y):
 
 class Menu(BaseInterface):
 
-  def __init__(self, disp, nested_options):
+  def __init__(self, disp, nested_options, has_parent=False):
     """
     :disp: an instance of a Adafruit_SSD1306 display
     :nested_options: top level must be:
@@ -32,7 +33,9 @@ class Menu(BaseInterface):
       child levels may also be None or Shim
       # Note: currently this enforces uniqueness -- may want to change that
       # in the future
+    :has_parent: was this instantiated by a parent menu?
     """
+    self.has_parent = has_parent
     if type(nested_options) == list:
       self.options = nested_options
       self.nested_options = None
@@ -62,12 +65,14 @@ class Menu(BaseInterface):
     self.draw_line_pointer(self.current_index)
 
     # Handle button presses
-    if self.is_button_pressed('A'):
+    if self.is_button_pressed(self.buttons.NEXT):
       self.increment_select()
-    if self.is_button_first_pressed('B'):
+    if self.is_button_first_pressed(self.buttons.SELECT):
       self.selected_action()
+    if self.is_button_first_pressed(self.buttons.BACK) and self.has_parent:
+      return True  # quits outer render loop
 
-    for name in self.button_names:
+    for name in self.buttons.values():
       self.was_button_pressed[name] = self.is_button_pressed(name)
 
   def draw_legend(self):
@@ -80,30 +85,38 @@ class Menu(BaseInterface):
     self.draw.polygon(
       translate_coords([(0,0), (6,0), (3, 6)], legend_center - 3, self.PADDING),
       outline=255,
-      fill=int(self.is_button_pressed('A'))
+      fill=int(self.is_button_pressed(self.buttons.NEXT))
     )
     # Button B - circle
     self.draw_circle(
       legend_center, self.display.height / 2, 6,
       outline=255,
-      fill=int(self.is_button_pressed('B'))
+      fill=int(self.is_button_pressed(self.buttons.SELECT))
     )
-    # Button C - back arrow  (not implemented in hardware yet)
+    # Button C - back arrow
     self.draw.polygon(
       translate_coords(
         [(0,3), (6,0), (6,6)],
         legend_center - 3, self.display.height - 6 - self.PADDING
       ),
       outline=255,
-      fill=int(self.is_button_pressed('A'))
+      fill=int(self.is_button_pressed(self.buttons.BACK))
     )
 
   # Internal state management
 
   current_index = 0  # Current selection index
   scroll_frame = 0  # Top index of scroll frame
-  button_names = ['A', 'B']
-  was_button_pressed = {name: False for name in button_names}  # on prev loop
+
+  # Mapping from button functions to pins
+  buttons = AttrDict({
+    'NEXT': 'A',
+    'SELECT': 'B',
+    'BACK': 'C',
+  })
+
+  # Was button pressed on prev loop?
+  was_button_pressed = {name: False for name in buttons.values()}
 
   def is_button_first_pressed(self, name):
     """Clean button press detection. Ignores continuous pressing."""
@@ -138,7 +151,7 @@ class Menu(BaseInterface):
 
     # Nested children, open a submenu
     else:
-      submenu = Menu(self.display, child)
+      submenu = Menu(self.display, child, has_parent=True)
 
     # TODO: add 3rd button and then implement back functionality
 

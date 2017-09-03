@@ -36,10 +36,11 @@ class BaseInterface(object):
     self.font = ImageFont.load_default()
 
     self.clear()
+    stop_running = None
 
     try:
-      while 1:
-        self.loop()
+      while stop_running is None:
+        stop_running = self.loop()  # Quit when loop returns a non-null value
         self.update_display()
     except KeyboardInterrupt: 
       GPIO.cleanup()
@@ -61,7 +62,7 @@ class BaseInterface(object):
   def is_button_released(self, name):
     """:name: should correspond to a key in core.PINS"""
     assert name in PINS, "%s is not in core.PINS" % name
-    return GPIO.input(PINS[name])
+    return not GPIO.input(PINS[name])
 
   def is_button_pressed(self, name):
     """:name: should correspond to a key in core.PINS"""

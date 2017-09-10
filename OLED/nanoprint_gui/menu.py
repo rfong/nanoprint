@@ -5,6 +5,8 @@ from collections import OrderedDict
 import socket
 import time
 
+import RPi.GPIO as GPIO
+
 from base_interface import BaseInterface
 from shims import Shim
 from util import AttrDict
@@ -45,6 +47,8 @@ class Menu(BaseInterface):
     else:
       raise Exception("Options passed must be OrderedDict or list")
 
+    print('Show menu:', self.options)
+
     super(Menu, self).__init__(disp)
 
   def loop(self):
@@ -65,14 +69,14 @@ class Menu(BaseInterface):
     self.draw_line_pointer(self.current_index)
 
     # Handle button presses
-    if self.is_button_pressed(self.buttons.NEXT):
+    if self.is_button_pressed(self.gpio.NEXT):
       self.increment_select()
-    if self.is_button_first_pressed(self.buttons.SELECT):
+    if self.is_button_first_pressed(self.gpio.SELECT):
       self.selected_action()
-    if self.is_button_first_pressed(self.buttons.BACK) and self.has_parent:
+    if self.is_button_first_pressed(self.gpio.BACK) and self.has_parent:
       return True  # quits outer render loop
 
-    for name in self.buttons.values():
+    for name in self.gpio.values():
       self.was_button_pressed[name] = self.is_button_pressed(name)
 
   def draw_legend(self):
@@ -85,13 +89,13 @@ class Menu(BaseInterface):
     self.draw.polygon(
       translate_coords([(0,0), (6,0), (3, 6)], legend_center - 3, self.PADDING),
       outline=255,
-      fill=int(self.is_button_pressed(self.buttons.NEXT))
+      fill=int(self.is_button_pressed(self.gpio.NEXT))
     )
     # Button B - circle
     self.draw_circle(
       legend_center, self.display.height / 2, 6,
       outline=255,
-      fill=int(self.is_button_pressed(self.buttons.SELECT))
+      fill=int(self.is_button_pressed(self.gpio.SELECT))
     )
     # Button C - back arrow
     self.draw.polygon(
@@ -100,7 +104,7 @@ class Menu(BaseInterface):
         legend_center - 3, self.display.height - 6 - self.PADDING
       ),
       outline=255,
-      fill=int(self.is_button_pressed(self.buttons.BACK))
+      fill=int(self.is_button_pressed(self.gpio.BACK))
     )
 
   # Internal state management
@@ -108,15 +112,15 @@ class Menu(BaseInterface):
   current_index = 0  # Current selection index
   scroll_frame = 0  # Top index of scroll frame
 
-  # Mapping from button functions to pins
-  buttons = AttrDict({
+  # Mapping from gpio functions to pins
+  gpio = AttrDict({
     'NEXT': 'A',
     'SELECT': 'B',
     'BACK': 'C',
   })
 
   # Was button pressed on prev loop?
-  was_button_pressed = {name: False for name in buttons.values()}
+  was_button_pressed = {name: False for name in gpio.values()}
 
   def is_button_first_pressed(self, name):
     """Clean button press detection. Ignores continuous pressing."""

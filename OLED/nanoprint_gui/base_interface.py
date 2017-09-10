@@ -9,7 +9,7 @@ import time
 
 import RPi.GPIO as GPIO
 
-from core import PINS
+import core
 
 
 class BaseInterface(object):
@@ -55,15 +55,23 @@ class BaseInterface(object):
 
   def update_display(self):
     self.display.image(self.image)
-    self.display.display()
+    while True:
+      try:
+        self.display.display()
+        break
+      except IOError:
+        print('IOError while updating display; retrying...')
     time.sleep(self.REFRESH_TIME)
     self.clear()
 
+  # GPIO helpers. `name` must correspond to a key in core.PINS
+
   def is_button_released(self, name):
-    """:name: should correspond to a key in core.PINS"""
-    assert name in PINS, "%s is not in core.PINS" % name
-    return not GPIO.input(PINS[name])
+    assert name in core.PINS, "%s is not in core.PINS" % name
+    return not GPIO.input(core.PINS[name])
 
   def is_button_pressed(self, name):
-    """:name: should correspond to a key in core.PINS"""
     return not self.is_button_released(name)
+
+  def set_gpio(self, name, state):
+    core.set_GPIO_output(name, state)

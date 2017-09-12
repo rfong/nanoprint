@@ -16,8 +16,12 @@ import RPi.GPIO as GPIO
 import core as nanoprint_core
 from core import PINS
 from menu import Menu
+from status_page import NetworkStatusShimFactory
 
-from shims import DocumentShimFactory, CuteFortuneShim, SassyFortuneShim
+from shims import Shim, \
+                  DocumentShimFactory, \
+                  CuteFortuneShim, \
+                  SassyFortuneShim
 
 
 def main():
@@ -36,9 +40,9 @@ def main():
   fortunes['cute fortunes'] = CuteFortuneShim
   fortunes['sassy fortunes'] = SassyFortuneShim
   options['fortune teller'] = fortunes
+  options['network status'] = NetworkStatusShimFactory(display)
 
-  options[''] = None
-  options['TODO:'] = None
+  options['- TODO -'] = None
   options['network printer'] = ['print me!', 'print you!']
   options['notepad'] = None
   options['arcane bytes'] = None

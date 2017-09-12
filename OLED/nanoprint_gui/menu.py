@@ -2,7 +2,6 @@
 
 
 from collections import OrderedDict
-import socket
 import time
 
 import RPi.GPIO as GPIO
@@ -11,13 +10,6 @@ from base_interface import BaseInterface
 from shims import Shim
 from util import AttrDict
 
-
-def get_ip():
-  s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-  s.connect(("8.8.8.8", 80))
-  ip_addr = s.getsockname()[0]
-  s.close()
-  return ip_addr
 
 def translate_coords(coords, x, y):
   """coords should be a list of 2D tuples"""
@@ -28,7 +20,7 @@ class Menu(BaseInterface):
 
   def __init__(self, disp, nested_options, has_parent=False):
     """
-    :disp: an instance of a Adafruit_SSD1306 display
+    :disp: an instance of an Adafruit_SSD1306 display
     :nested_options: top level must be:
       - an OrderedDict (specifies a nested option list)
       - a list (specifies plain text options)
@@ -53,29 +45,29 @@ class Menu(BaseInterface):
 
   def loop(self):
     """ Main render loop """
-    #ip_addr = get_ip()
-    #if ip_addr:
-    #  self.write_line("IP: " + ip_addr)
-    #else:
-    #  self.write_line("Searching for Wi-Fi...")
-    #self.write_line("hihihihi", line=1)
-
     #self.draw_legend()
+    self.redraw_menu()
+    return self.handle_buttons()
 
+  def redraw_menu(self):
     # Draw menu
     for i, opt in enumerate(self.options):
       if self.is_line_entirely_in_display(i):
         self.write_line(opt, line=i)
     self.draw_line_pointer(self.current_index)
 
+  def handle_buttons(self):
     # Handle button presses
     if self.is_button_pressed(self.gpio.NEXT):
+      print("NEXT")
       self.increment_select()
     if self.is_button_first_pressed(self.gpio.SELECT):
+      print("SELECT")
       self.selected_action()
     if self.is_button_first_pressed(self.gpio.BACK) and self.has_parent:
+      print("BACK")
       return True  # quits outer render loop
-
+    # Update prev pressed values
     for name in self.gpio.values():
       self.was_button_pressed[name] = self.is_button_pressed(name)
 

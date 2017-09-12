@@ -41,8 +41,8 @@ Other hidden costs that I already had on hand from previous projects:
 
 
 
-# Appendix: References
-Guides referenced:
+# Appendix: Build references
+
 + [Preparing an SD card for Raspberry Pi](https://learn.adafruit.com/adafruit-raspberry-pi-lesson-1-preparing-and-sd-card-for-your-raspberry-pi/overview)
 + [Raspberry Pi Zero — SSH setup without adapters](https://davidmaitland.me/2015/12/raspberry-pi-zero-headless-setup/)
 + [Configure I2C on Raspberry Pi](https://learn.adafruit.com/adafruits-raspberry-pi-lesson-4-gpio-setup/configuring-i2c)

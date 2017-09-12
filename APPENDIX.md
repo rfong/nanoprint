@@ -1,7 +1,4 @@
-Appendix for my blog post
-
-
-# Parts list
+# Appendix: Parts list
 
 Note that you can get most any component except the Raspberry Pi for around half price if you’re willing to wait a month for Aliexpress.
 
@@ -43,7 +40,8 @@ Other hidden costs that I already had on hand from previous projects:
 + Various woodworking tools & measuring tools
 
 
-# References
+
+# Appendix: References
 Guides referenced:
 + [Preparing an SD card for Raspberry Pi](https://learn.adafruit.com/adafruit-raspberry-pi-lesson-1-preparing-and-sd-card-for-your-raspberry-pi/overview)
 + [Raspberry Pi Zero — SSH setup without adapters](https://davidmaitland.me/2015/12/raspberry-pi-zero-headless-setup/)
